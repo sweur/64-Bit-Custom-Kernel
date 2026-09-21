@@ -72,27 +72,21 @@ protected_mode_start:
     rep stosd
     mov edi, cr3
 
-    ; PML4[0] -> PDPT (at 0x2000), present + writable
     mov dword [edi], 0x2000 | 3
     add edi, 0x1000
-    ; PDPT[0] -> PD (at 0x3000), present + writable
     mov dword [edi], 0x3000 | 3
     add edi, 0x1000
-    ; PD[0] -> maps 0x0-0x1FFFFF as one 2MB page: present + writable + huge page
     mov dword [edi], 0x0 | 0x83
 
-    ; ---- Enable PAE (required for long mode paging) ----
     mov eax, cr4
     or eax, 1 << 5           ; PAE bit
     mov cr4, eax
 
-    ; ---- Set the Long Mode Enable bit in the EFER MSR ----
     mov ecx, 0xC0000080      ; EFER MSR number
     rdmsr
     or eax, 1 << 8           ; LME bit
     wrmsr
 
-    ; ---- Turn on paging -> this actually activates long mode ----
     mov eax, cr0
     or eax, 1 << 31          ; PG bit
     mov cr0, eax
@@ -107,8 +101,7 @@ long_mode_start:
     mov es, ax
     mov ss, ax
 
-    ; Kernel was loaded at 0x8000 — jump into it. We're fully in 64-bit
-    ; long mode now, so this is a real function call into our kernel.
+    ; Kernel was loaded at 0x8000
     jmp 0x8000
 
 ; ============================================================

@@ -1,36 +1,13 @@
-; ============================================================
-; kernel.asm — the "kernel" itself
-; The bootloader jumps here after switching to 64-bit long mode.
-; This is a flat binary loaded at physical address 0x8000, so
-; org must match where the bootloader put it.
-;
-; All this does right now: write text directly into the VGA
-; text-mode buffer (a fixed memory address the screen reads from)
-; and halt. That's the "hello world" of OS dev — proving you can
-; control the machine at the lowest level, with no OS underneath you.
-; ============================================================
 
-jmp kernel_start
 [org 0x8000]
 [bits 64]
+jmp kernel_start
 CODE64_SEG equ 8
 lidt [idt_descriptor]
 
-idt_keyboard_entry:           ; IDT Table
-    dw 0
-    dw CODE64_SEG                         ; selector which segment? (you defined this already)
-    db 0
-    db 10001110b                          ; type_attr
-    dw 0
-    dd 0
-    dd 0
-
-    mov rax, keyboard_handler
-    mov [idt_keyboard_entry], ax
-    shr rax, 16
-    mov [idt_keyboard_entry+6], ax
-    shr rax, 16
-    mov [idt_keyboard_entry+8], eax
+idt_start:
+    times 256*16 db 0
+idt_end:
 
 keyboard_handler:
     ; (later: we'll read the actual key here)
@@ -41,8 +18,8 @@ keyboard_handler:
     iretq
 
 idt_descriptor:
-    dw 15    
-    dd idt_keyboard_entry
+    dw idt_end - idt_start - 1
+    dd idt_start
 
 kernel_start:
     mov rsi, message
