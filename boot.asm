@@ -28,6 +28,10 @@ start:
     mov bx, 0x8000          ; load destination: ES:BX = 0x0000:0x8000
     mov dh, 32               ; number of sectors to read (32 * 512 = 16KB, plenty for now)
     mov dl, [BOOT_DRIVE]
+    mov ah, 0x00
+    mov al, 0x13
+    int 0x10
+
     call disk_load
 
     mov si, msg_loaded
