@@ -36,9 +36,15 @@ run.sh      — boots it in QEMU
 
 ## Status
 
-- [x] Boots into 64-bit long mode
+- [x] Boots into 64-bit long mode (TEMPORARILY IN 32-bit PROTECTED MODE)
+- [x] Displays GRUB/Multiboot 2 bootloader menu
 - [x] Writes to screen and serial
 - [x] IDT set up with a keyboard handler entry
 - [ ] PIC remapped so keyboard interrupts actually fire
 - [ ] Reading real keypresses
 - [ ] Basic shell
+- [ ] Command line environment
+- [ ] Filesystem (Either will be written to RAM 0 persistence or actual stored memory, will update when decided)
+- [ ] Basic commands (help, cd, ls, whoami, cat, rm, nano)
+- [ ] Custom fastfetch
+- [ ] Some sort of CLI game built in
